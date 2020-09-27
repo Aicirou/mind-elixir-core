@@ -112,6 +112,7 @@ function MindElixir({
   before,
   newTopicName,
   allowUndo,
+  merouter,
 }) {
   vari.newTopicName = newTopicName
   this.mindElixirBox = document.querySelector(el)
@@ -122,7 +123,9 @@ function MindElixir({
   this.locale = locale
   this.contextMenuOption = contextMenuOption
   this.contextMenu = contextMenu === undefined ? true : contextMenu
-  this.toolBar = toolBar === undefined ? true : toolBar
+  let toolBarobj = { lt: true, rb: true }
+  this.toolBar =
+    toolBar === undefined ? toolBarobj : { ...toolBarobj, ...toolBar }
   this.nodeMenu = nodeMenu === undefined ? true : nodeMenu
   this.keypress = keypress === undefined ? true : keypress
   // record the direction before enter focus mode, must true in focus mode, reset to null after exit focus
@@ -131,6 +134,8 @@ function MindElixir({
   vari.mevar_draggable = draggable === undefined ? true : draggable
   this.editable = editable === undefined ? true : editable
   this.allowUndo = allowUndo === undefined ? true : allowUndo
+  this.merouter = merouter
+  window.merouter = merouter
   this.parentMap = {} // deprecate?
   this.currentNode = null // the selected <tpc/> element
   this.currentLink = null // the selected link svg element
@@ -155,7 +160,7 @@ function MindElixir({
     }
   })
 
-  this.undo = function () {
+  this.undo = function() {
     let operation = this.history.pop()
     if (!operation) return
     this.isUndo = true
@@ -184,7 +189,7 @@ MindElixir.prototype = {
   addParentLink,
   getObjById,
   // node operation
-  insertSibling: async function (...args) {
+  insertSibling: async function(...args) {
     if (
       !this.before.insertSibling ||
       (await this.before.insertSibling.apply(this, args))
@@ -192,7 +197,7 @@ MindElixir.prototype = {
       insertSibling.apply(this, args)
     }
   },
-  insertBefore: async function (...args) {
+  insertBefore: async function(...args) {
     if (
       !this.before.insertBefore ||
       (await this.before.insertBefore.apply(this, args))
@@ -200,7 +205,7 @@ MindElixir.prototype = {
       insertBefore.apply(this, args)
     }
   },
-  addChild: async function (...args) {
+  addChild: async function(...args) {
     if (
       !this.before.addChild ||
       (await this.before.addChild.apply(this, args))
@@ -208,7 +213,7 @@ MindElixir.prototype = {
       addChild.apply(this, args)
     }
   },
-  moveNode: async function (...args) {
+  moveNode: async function(...args) {
     if (
       !this.before.moveNode ||
       (await this.before.moveNode.apply(this, args))
@@ -216,7 +221,7 @@ MindElixir.prototype = {
       moveNode.apply(this, args)
     }
   },
-  removeNode: async function (...args) {
+  removeNode: async function(...args) {
     if (
       !this.before.removeNode ||
       (await this.before.removeNode.apply(this, args))
@@ -226,7 +231,7 @@ MindElixir.prototype = {
   },
   moveUpNode,
   moveDownNode,
-  beginEdit: async function (...args) {
+  beginEdit: async function(...args) {
     if (
       !this.before.beginEdit ||
       (await this.before.beginEdit.apply(this, args))
@@ -273,7 +278,7 @@ MindElixir.prototype = {
   disableEdit,
   expandNode,
 
-  init: function () {
+  init: function() {
     /**
      * @function
      * @global

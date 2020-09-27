@@ -7,7 +7,7 @@ export let findEle = id => {
   return $d.querySelector(`[data-nodeid=me${id}]`)
 }
 
-export let createGroup = function (node) {
+export let createGroup = function(node) {
   let grp = $d.createElement('GRP')
   let top = createTop(node)
   grp.appendChild(top)
@@ -21,7 +21,7 @@ export let createGroup = function (node) {
   return { grp, top }
 }
 
-export let createTop = function (nodeObj) {
+export let createTop = function(nodeObj) {
   let top = $d.createElement('t')
   let tpc = createTopic(nodeObj)
   // TODO allow to add online image
@@ -51,12 +51,31 @@ export let createTop = function (nodeObj) {
   return top
 }
 
-export let createTopic = function (nodeObj) {
+export let createTopic = function(nodeObj) {
   let topic = $d.createElement('tpc')
   topic.nodeObj = nodeObj
   topic.innerHTML = nodeObj.topic
   topic.dataset.nodeid = 'me' + nodeObj.id
   topic.draggable = vari.mevar_draggable
+
+  if (nodeObj.linkUrl) {
+    let link = $d.createElement('a')
+    if (window.merouter && nodeObj.linkUrl.indexOf('http') < 0) {
+      link.onclick = function() {
+        console.log('w234234')
+        window.merouter(nodeObj.linkUrl)
+      }
+    } else {
+      link.onclick = function() {
+        window.open(nodeObj.linkUrl)
+      }
+    }
+    link.className = 'topic_link'
+    link.innerHTML = `<svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-link"></use>
+                      </svg>`
+    topic.appendChild(link)
+  }
   return topic
 }
 
@@ -125,7 +144,7 @@ export function createInputDiv(tpc) {
   console.timeEnd('createInputDiv')
 }
 
-export let createExpander = function (expanded) {
+export let createExpander = function(expanded) {
   let expander = $d.createElement('epd')
   // 包含未定义 expanded 的情况，未定义视为展开
   expander.innerHTML = expanded !== false ? '-' : '+'
