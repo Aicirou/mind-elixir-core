@@ -35,6 +35,9 @@
     }
     root {
       position: absolute;
+      .selected {
+        padding: 10px 0;
+      }
       tpc {
         color: rgb(255, 255, 255);
         padding: 10px @GAP;
@@ -57,7 +60,7 @@
     & > grp {
       // for primary node
       position: absolute;
-      & > t > tpc {
+      & > t > ng {
         background-color: rgb(255, 255, 255);
         border: 1px solid rgb(68, 68, 68);
         border-radius: 5px;
@@ -97,6 +100,16 @@
       cursor: pointer;
       padding: 0 @GAP;
       margin-top: 10px;
+      ng {
+        display: flex;
+        align-items: center;
+        ngl {
+          display: flex;
+          flex-wrap: wrap;
+        }
+        ngr {
+        }
+      }
       tpc {
         position: relative;
         display: block;
@@ -116,21 +129,8 @@
           direction: ltr;
           -webkit-user-select: auto;
         }
-        .tags {
-          direction: ltr;
-          span {
-            display: inline-block;
-            border-radius: 3px;
-            padding: 2px 4px;
-            background: #d6f0f8;
-            color: #276f86;
-            margin: 0px;
-            font-size: 12px;
-            height: 16px;
-            line-height: 16px;
-            margin-right: 3px;
-            margin-top: 2px;
-          }
+        text {
+          display: block;
         }
         .icons {
           display: inline-block;
@@ -180,6 +180,43 @@
           }
         }
       }
+      .tags{
+        flex: 0 0 100%;
+      }
+      .tag, .tag_success, .tag_orange, .tag_primary, .tag_gray, .tag_danger{
+        direction: ltr;
+        display: inline-block;
+        border-radius: 3px;
+        padding: 2px 4px;
+        background: #d6f0f8;
+        color: #276f86;
+        margin: 0px;
+        font-size: 12px;
+        height: 16px;
+        line-height: 16px;
+        margin-right: 3px;
+        margin-top: 2px;
+      }
+      .tag_orange{
+        background: #fd7e14;
+        color: white;
+      }
+      .tag_primary{
+        background: #007bff;
+        color: white;
+      }
+      .tag_success{
+        background: #28a745;
+        color: white;
+      }
+      .tag_gray{
+        background: #6c757d;
+        color: white;
+      }
+      .tag_danger{
+        background: #dc3545;
+        color: white;
+      }
     }
   }
   // iconfont
@@ -197,7 +234,7 @@
     position: absolute;
     height: 100%;
     width: 100%;
-    top: 0;
+    top: 5px;
     left: 0;
   }
   .topiclinks,
@@ -225,6 +262,8 @@
     }
   }
   a.topic_link {
+    pointer-events: all;
+    direction: unset;
     text-decoration : none;
     cursor: pointer;
     margin: 0 5px;

@@ -7,7 +7,7 @@ export let findEle = id => {
   return $d.querySelector(`[data-nodeid=me${id}]`)
 }
 
-export let createGroup = function(node) {
+export let createGroup = function (node) {
   let grp = $d.createElement('GRP')
   let top = createTop(node)
   grp.appendChild(top)
@@ -21,8 +21,11 @@ export let createGroup = function(node) {
   return { grp, top }
 }
 
-export let createTop = function(nodeObj) {
+export let createTop = function (nodeObj) {
   let top = $d.createElement('t')
+  let n = $d.createElement('ng')
+  let ngl = $d.createElement('ngl')
+  let ngr = $d.createElement('ngr')
   let tpc = createTopic(nodeObj)
   // TODO allow to add online image
   if (nodeObj.style) {
@@ -39,34 +42,23 @@ export let createTop = function(nodeObj) {
       .join('')
     tpc.appendChild(iconsContainer)
   }
+  ngl.appendChild(tpc)
   if (nodeObj.tags) {
     let tagsContainer = $d.createElement('div')
     tagsContainer.className = 'tags'
     tagsContainer.innerHTML = nodeObj.tags
-      .map(tag => `<span>${tag}</span>`)
+      .map(tag => `<span class="tag_${tag.type}">${tag.text}</span>`)
       .join('')
-    tpc.appendChild(tagsContainer)
+    ngl.appendChild(tagsContainer)
   }
-  top.appendChild(tpc)
-  return top
-}
-
-export let createTopic = function(nodeObj) {
-  let topic = $d.createElement('tpc')
-  topic.nodeObj = nodeObj
-  topic.innerHTML = nodeObj.topic
-  topic.dataset.nodeid = 'me' + nodeObj.id
-  topic.draggable = vari.mevar_draggable
-
   if (nodeObj.linkUrl) {
     let link = $d.createElement('a')
     if (window.merouter && nodeObj.linkUrl.indexOf('http') < 0) {
-      link.onclick = function() {
-        console.log('w234234')
+      link.onclick = function () {
         window.merouter(nodeObj.linkUrl)
       }
     } else {
-      link.onclick = function() {
+      link.onclick = function () {
         window.open(nodeObj.linkUrl)
       }
     }
@@ -74,9 +66,33 @@ export let createTopic = function(nodeObj) {
     link.innerHTML = `<svg class="icon" aria-hidden="true">
                         <use xlink:href="#icon-link"></use>
                       </svg>`
-    topic.appendChild(link)
+    ngr.appendChild(link)
   }
+  n.appendChild(ngl)
+  n.appendChild(ngr)
+  top.appendChild(n)
+  return top
+}
+
+export let createTopic = function (nodeObj) {
+  let topic = $d.createElement('tpc')
+  topic.nodeObj = nodeObj
+  topic.dataset.nodeid = 'me' + nodeObj.id
+  topic.draggable = vari.mevar_draggable
+  createTopicText(topic, nodeObj)
   return topic
+}
+
+export let createTopicText = function (topic, nodeObj) {
+  if(!nodeObj.topic){
+    return
+  }
+  const texts = nodeObj.topic.split(/\n/)
+  texts.forEach(text => {
+    let textEl = $d.createElement('text')
+    textEl.innerText = text
+    topic.appendChild(textEl)
+  })
 }
 
 export function selectText(div) {
@@ -92,11 +108,20 @@ export function selectText(div) {
   }
 }
 
+function getElTextContent(el) {
+  let textContent = ''
+  const childNodes = el.childNodes
+  childNodes.forEach(node => {
+    textContent += node.textContent + '<br/>'
+  })
+  return textContent.trim().replace(/<br\/>$/, '')
+}
+
 export function createInputDiv(tpc) {
   console.time('createInputDiv')
   if (!tpc) return
   let div = $d.createElement('div')
-  let origin = tpc.childNodes[0].textContent
+  let origin = getElTextContent(tpc)
   tpc.appendChild(div)
   div.innerHTML = origin
   div.contentEditable = true
@@ -118,7 +143,7 @@ export function createInputDiv(tpc) {
     if (key === 8) {
       // 不停止冒泡冒到document就把节点删了
       e.stopPropagation()
-    } else if (key === 13 || key === 9) {
+    } else if ((key === 13 || key === 9) && !e.shiftKey) {
       e.preventDefault()
       this.inputDiv.blur()
       this.map.focus()
@@ -127,7 +152,7 @@ export function createInputDiv(tpc) {
   div.addEventListener('blur', () => {
     if (!div) return // 防止重复blur
     let node = tpc.nodeObj
-    let topic = div.textContent.trim()
+    let topic = div.innerText
     if (topic === '') node.topic = origin
     else node.topic = topic
     div.remove()
@@ -138,13 +163,15 @@ export function createInputDiv(tpc) {
       origin,
     })
     if (topic === origin) return // 没有修改不做处理
-    tpc.childNodes[0].textContent = node.topic
+    tpc.innerHTML = ''
+    // tpc.childNodes[0].textContent = node.topic
+    createTopicText(tpc, node)
     this.linkDiv()
   })
   console.timeEnd('createInputDiv')
 }
 
-export let createExpander = function(expanded) {
+export let createExpander = function (expanded) {
   let expander = $d.createElement('epd')
   // 包含未定义 expanded 的情况，未定义视为展开
   expander.innerHTML = expanded !== false ? '-' : '+'

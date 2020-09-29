@@ -1,35 +1,44 @@
 import { dragMoveHelper } from './utils/index'
-export default function (mind) {
-  mind.map.addEventListener('click', e => {
-    // if (dragMoveHelper.afterMoving) return
-    e.preventDefault()
-    if (e.target.nodeName === 'EPD') {
-      mind.expandNode(e.target.previousSibling)
-    } else if (
-      e.target.parentElement.nodeName === 'T' ||
-      e.target.parentElement.nodeName === 'ROOT'
+function getParents(elem, tag) {
+  while (elem.parentNode) {
+    if (
+      (elem.nodeName.toLowerCase() === tag ||
+        elem.nodeName.toLowerCase() === 'root') &&
+      elem.className != 'map-canvas'
     ) {
-      mind.selectNode(e.target)
-    } else if (e.target.nodeName === 'path') {
-      if (e.target.parentElement.nodeName === 'g') {
-        mind.selectLink(e.target.parentElement)
-      }
-    } else if (e.target.className === 'circle') {
-      // skip circle
-    } else {
-      mind.unselectNode()
-      mind.hideLinkController()
+      return elem
     }
-  })
+    elem = elem.parentNode
+  }
+  return null
+}
+export default function (mind) {
+  // mind.map.addEventListener('click', e => {
+  //   // if (dragMoveHelper.afterMoving) return
+  //   e.preventDefault()
+  //   let t = getParents(e.target, 'ng')
+  //   if (e.target.nodeName === 'EPD') {
+  //     mind.expandNode(e.target.previousSibling)
+  //   } else if (t) {
+  //     mind.selectNode(t)
+  //   } else if (e.target.nodeName === 'path') {
+  //     if (e.target.parentElement.nodeName === 'g') {
+  //       mind.selectLink(e.target.parentElement)
+  //     }
+  //   } else if (e.target.className === 'circle') {
+  //     // skip circle
+  //   } else {
+  //     mind.unselectNode()
+  //     mind.hideLinkController()
+  //   }
+  // })
 
   mind.map.addEventListener('dblclick', e => {
     e.preventDefault()
     if (!mind.editable) return
-    if (
-      e.target.parentElement.nodeName === 'T' ||
-      e.target.parentElement.nodeName === 'ROOT'
-    ) {
-      mind.beginEdit(e.target)
+    let tpc = getParents(e.target, 'tpc')
+    if (tpc) {
+      mind.beginEdit(tpc)
     }
   })
 
