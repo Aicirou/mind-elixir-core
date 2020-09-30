@@ -78,6 +78,7 @@ export let createTop = function (nodeObj) {
   n.appendChild(ngi_0)
   n.appendChild(ngi_1)
   n.appendChild(ngi_2)
+  n.nodeObj = nodeObj
   top.appendChild(n)
   return top
 }
