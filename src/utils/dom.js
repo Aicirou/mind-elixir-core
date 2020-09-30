@@ -24,8 +24,9 @@ export let createGroup = function (node) {
 export let createTop = function (nodeObj) {
   let top = $d.createElement('t')
   let n = $d.createElement('ng')
-  let ngl = $d.createElement('ngl')
-  let ngr = $d.createElement('ngr')
+  let ngi_0 = $d.createElement('ngi')
+  let ngi_1 = $d.createElement('ngi')
+  let ngi_2 = $d.createElement('ngi')
   let tpc = createTopic(nodeObj)
   // TODO allow to add online image
   if (nodeObj.style) {
@@ -40,16 +41,22 @@ export let createTop = function (nodeObj) {
     iconsContainer.innerHTML = nodeObj.icons
       .map(icon => `<span>${icon}</span>`)
       .join('')
-    tpc.appendChild(iconsContainer)
+    ngi_0.appendChild(iconsContainer)
   }
-  ngl.appendChild(tpc)
+  if (nodeObj.avatar && nodeObj.avatar.url) {
+    let avatarContainer = $d.createElement('div')
+    avatarContainer.className = 'node_avatar'
+    avatarContainer.innerHTML = `<img title="${nodeObj.avatar.title}" src="${nodeObj.avatar.url}" />`
+    ngi_0.appendChild(avatarContainer)
+  }
+  ngi_1.appendChild(tpc)
   if (nodeObj.tags) {
     let tagsContainer = $d.createElement('div')
     tagsContainer.className = 'tags'
     tagsContainer.innerHTML = nodeObj.tags
       .map(tag => `<span class="tag_${tag.type}">${tag.text}</span>`)
       .join('')
-    ngl.appendChild(tagsContainer)
+    ngi_1.appendChild(tagsContainer)
   }
   if (nodeObj.linkUrl) {
     let link = $d.createElement('a')
@@ -66,10 +73,11 @@ export let createTop = function (nodeObj) {
     link.innerHTML = `<svg class="icon" aria-hidden="true">
                         <use xlink:href="#icon-link"></use>
                       </svg>`
-    ngr.appendChild(link)
+    ngi_2.appendChild(link)
   }
-  n.appendChild(ngl)
-  n.appendChild(ngr)
+  n.appendChild(ngi_0)
+  n.appendChild(ngi_1)
+  n.appendChild(ngi_2)
   top.appendChild(n)
   return top
 }

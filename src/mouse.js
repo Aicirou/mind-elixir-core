@@ -13,25 +13,26 @@ function getParents(elem, tag) {
   return null
 }
 export default function (mind) {
-  // mind.map.addEventListener('click', e => {
-  //   // if (dragMoveHelper.afterMoving) return
-  //   e.preventDefault()
-  //   let t = getParents(e.target, 'ng')
-  //   if (e.target.nodeName === 'EPD') {
-  //     mind.expandNode(e.target.previousSibling)
-  //   } else if (t) {
-  //     mind.selectNode(t)
-  //   } else if (e.target.nodeName === 'path') {
-  //     if (e.target.parentElement.nodeName === 'g') {
-  //       mind.selectLink(e.target.parentElement)
-  //     }
-  //   } else if (e.target.className === 'circle') {
-  //     // skip circle
-  //   } else {
-  //     mind.unselectNode()
-  //     mind.hideLinkController()
-  //   }
-  // })
+  mind.map.addEventListener('click', e => {
+    // if (dragMoveHelper.afterMoving) return
+    e.preventDefault()
+    let t = getParents(e.target, 'ng')
+    if (e.target.nodeName === 'EPD') {
+      mind.expandNode(e.target.previousSibling)
+    } else if (t) {
+      if (!mind.editable) return
+      mind.selectNode(t)
+    } else if (e.target.nodeName === 'path') {
+      if (e.target.parentElement.nodeName === 'g') {
+        mind.selectLink(e.target.parentElement)
+      }
+    } else if (e.target.className === 'circle') {
+      // skip circle
+    } else {
+      mind.unselectNode()
+      mind.hideLinkController()
+    }
+  })
 
   mind.map.addEventListener('dblclick', e => {
     e.preventDefault()

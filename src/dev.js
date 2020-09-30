@@ -1,5 +1,6 @@
 import MindElixir, { E } from './index'
 import { exportSvg, exportPng } from '../painter/index'
+import data from './exampleData/project'
 
 let mind = new MindElixir({
   el: '#map',
@@ -7,7 +8,7 @@ let mind = new MindElixir({
   direction: MindElixir.SIDE,
   // direction: MindElixir.RIGHT,
   // data: MindElixir.new('new topic'),
-  data: MindElixir.example,
+  data: data,
   locale: 'en',
   draggable: true,
   editable: true,
